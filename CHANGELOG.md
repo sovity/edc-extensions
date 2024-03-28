@@ -15,6 +15,24 @@ please see [changelog_updates.md](docs/dev/changelog_updates.md).
 
 #### Minor Changes
 
+#### Patch Changes
+
+### Deployment Migration Notes
+
+#### Compatible Versions
+
+## [7.3.0] - 2024-03-28
+
+### Overview
+
+### EDC UI
+
+https://github.com/sovity/edc-ui/releases/tag/v3.0.0
+
+### EDC Extensions
+
+#### Minor Changes
+
 - UIAsset: Replaced unsafe additional and private properties with safer alternative fields `customJsonAsString` (**not** affected by Json LD manipulation) and `customJsonLdAsString` (affected by Json LD manipulation), along with their private counterparts.
 - API Wrapper: TS Client Library now supports OAuth Client Credentials
 - EDC Backend: Added config variables for remote debugging
@@ -37,6 +55,11 @@ please see [changelog_updates.md](docs/dev/changelog_updates.md).
 
 #### Compatible Versions
 
+- Connector Backend Docker Images:
+  - Dev EDC: `ghcr.io/sovity/edc-dev:7.3.0`
+  - sovity EDC CE: `ghcr.io/sovity/edc-ce:7.3.0`
+  - MDS EDC CE: `ghcr.io/sovity/edc-ce-mds:7.3.0`
+- Connector UI Docker Image: `ghcr.io/sovity/edc-ui:3.0.0`
 
 ## [7.2.2] - 2024-03-13
 

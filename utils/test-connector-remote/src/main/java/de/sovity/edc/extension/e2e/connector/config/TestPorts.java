@@ -11,15 +11,14 @@
  *      sovity GmbH - init
  */
 
-package de.sovity.edc.utils.catalog.model;
+package de.sovity.edc.extension.e2e.connector.config;
 
-import jakarta.json.JsonObject;
-import lombok.Data;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import java.util.List;
+public class TestPorts {
+    private static final AtomicInteger NEXT = new AtomicInteger(55000);
 
-@Data
-public class DspDataOffer {
-    private final JsonObject assetPropertiesJsonLd;
-    private final List<DspContractOffer> contractOffers;
+    public static int nextFreePorts() {
+        return NEXT.addAndGet(10);
+    }
 }

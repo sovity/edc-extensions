@@ -22,21 +22,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestUtils {
+
+    public static String ip;
+
     private static final int MANAGEMENT_PORT = 34002;
     private static final int PROTOCOL_PORT = 34003;
     private static final int WEB_PORT = 34001;
     private static final String MANAGEMENT_PATH = "/api/management";
     private static final String PROTOCOL_PATH = "/api/dsp";
     public static final String MANAGEMENT_API_KEY = "123456";
-    public static final String MANAGEMENT_ENDPOINT = "http://localhost:" + MANAGEMENT_PORT + MANAGEMENT_PATH;
+    public static String getMANAGEMENT_ENDPOINT() {
+        return "http://" + ip + ":" + MANAGEMENT_PORT + MANAGEMENT_PATH;
+    }
 
 
-    public static final String PROTOCOL_HOST = "http://localhost:" + PROTOCOL_PORT;
-    public static final String PROTOCOL_ENDPOINT = PROTOCOL_HOST + PROTOCOL_PATH;
+    public static final String getPROTOCOL_HOST() {
+        return "http://" + ip + ":" + PROTOCOL_PORT;
+    }
+    public static String getPROTOCOL_ENDPOINT() {
+        return getPROTOCOL_HOST() + PROTOCOL_PATH;
+    }
 
     public static Map<String, String> createConfiguration(
             Map<String, String> additionalConfigProperties
     ) {
+        System.err.println("Starting EDC with DSP URL = " + getPROTOCOL_ENDPOINT());
         Map<String, String> config = new HashMap<>();
         config.put("web.http.port", String.valueOf(WEB_PORT));
         config.put("web.http.path", "/api");
@@ -45,7 +55,7 @@ public class TestUtils {
         config.put("web.http.protocol.port", String.valueOf(PROTOCOL_PORT));
         config.put("web.http.protocol.path", PROTOCOL_PATH);
         config.put("edc.api.auth.key", MANAGEMENT_API_KEY);
-        config.put("edc.dsp.callback.address", PROTOCOL_ENDPOINT);
+        config.put("edc.dsp.callback.address", getPROTOCOL_ENDPOINT());
         config.put("edc.oauth.provider.audience", "idsc:IDS_CONNECTORS_ALL");
 
         config.put("edc.participant.id", "my-edc-participant-id");
@@ -72,13 +82,13 @@ public class TestUtils {
     }
 
     public static void setupExtension(EdcExtension extension, Map<String, String> configProperties) {
-        extension.registerServiceMock(ProtocolWebhook.class, () -> PROTOCOL_ENDPOINT);
+        extension.registerServiceMock(ProtocolWebhook.class, () -> getPROTOCOL_ENDPOINT());
         extension.setConfiguration(createConfiguration(configProperties));
     }
 
     public static EdcClient edcClient() {
         return EdcClient.builder()
-                .managementApiUrl(TestUtils.MANAGEMENT_ENDPOINT)
+                .managementApiUrl(TestUtils.getMANAGEMENT_ENDPOINT())
                 .managementApiKey(TestUtils.MANAGEMENT_API_KEY)
                 .build();
     }

@@ -23,6 +23,10 @@ import de.sovity.edc.ext.wrapper.api.common.mappers.utils.EdcPropertyUtils;
 import de.sovity.edc.ext.wrapper.api.common.mappers.utils.FailedMappingException;
 import de.sovity.edc.utils.jsonld.vocab.Prop;
 import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.eclipse.edc.connector.spi.asset.AssetService;
 import org.eclipse.edc.junit.annotations.ApiTest;
 import org.eclipse.edc.junit.extensions.EdcExtension;
@@ -33,11 +37,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,14 +63,61 @@ public class AssetApiServiceTest {
     EdcPropertyUtils edcPropertyUtils;
 
     @BeforeEach
-    void setUp(EdcExtension extension) {
+    void setUp(EdcExtension extension) throws SocketException {
+
+        List<InetAddress> addrList = new ArrayList<>();
+        for(Enumeration<NetworkInterface> eni = NetworkInterface.getNetworkInterfaces(); eni.hasMoreElements(); ) {
+            final NetworkInterface ifc = eni.nextElement();
+            if(ifc.isUp()) {
+                for(Enumeration<InetAddress> ena = ifc.getInetAddresses(); ena.hasMoreElements(); ) {
+                    addrList.add(ena.nextElement());
+                }
+            }
+        }
+        System.err.println("\n");
+        System.err.println(String.join("\n",  addrList.stream().map(InetAddress::toString).toList()));
+        System.err.println("\n");
+
+        TestUtils.ip = addrList
+                .stream()
+                .filter(it -> Pattern.matches("/[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+", it.toString()))
+                .findFirst()
+                .get()
+                .toString()
+                .substring(1);
+
+        System.err.println("Using ip " + TestUtils.ip);
+
+        System.err.println("setup");
         TestUtils.setupExtension(extension);
         edcPropertyUtils = new EdcPropertyUtils();
         client = TestUtils.edcClient();
+        System.err.println("end setup");
     }
 
     @Test
-    void assetPage(AssetService assetStore) {
+    void assetPage(AssetService assetStore) throws IOException {
+        System.err.println("listing IPs");
+        String line = "ss -lnptu";
+        CommandLine cmd = CommandLine.parse(line);
+        DefaultExecutor executor = new DefaultExecutor();
+        ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        PumpStreamHandler psh = new PumpStreamHandler(stdout, stderr);
+        executor.setStreamHandler(psh);
+        int exitvalue = executor.execute(cmd);
+        String output = stdout.toString();
+        String error = stderr.toString();
+
+        System.err.println("Socket statistics stdout:\n" + output);
+
+        System.err.println("\n");
+        System.err.println("request");
+        System.err.println("OpenAPI");
+        System.err.println("OpenApi base URL " + client.uiApi().getCustomBaseUrl());
+        System.err.println("protocol " + TestUtils.getPROTOCOL_ENDPOINT());
+        client.uiApi().getCatalogPageDataOffers(TestUtils.getPROTOCOL_ENDPOINT());
+        System.err.println("end request");
         // arrange
         var properties = Map.of(
                 Asset.PROPERTY_ID, "asset-1",

@@ -74,6 +74,8 @@ allprojects {
         configFile = rootProject.file("docs/dev/checkstyle/checkstyle-config.xml")
         configDirectory.set(rootProject.file("docs/dev/checkstyle"))
         maxErrors = 0 // does not tolerate errors
+        maxWarnings = 0
+        sourceSets = emptySet()
     }
 
     repositories {

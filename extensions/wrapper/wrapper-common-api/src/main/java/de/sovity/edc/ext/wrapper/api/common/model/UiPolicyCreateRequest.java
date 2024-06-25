@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
+//import java.util.List;
 
 @Getter
 @Setter
@@ -34,5 +34,6 @@ import java.util.List;
         + " subset of the original EDC Policy Entity.")
 public class UiPolicyCreateRequest {
     @Schema(description = "Conjunction of required expressions for the policy to evaluate to TRUE.")
-    private List<UiPolicyConstraint> constraints;
+//    private List<UiPolicyConstraint> constraints;
+    private UiPolicyExpression expression; // NEW
 }

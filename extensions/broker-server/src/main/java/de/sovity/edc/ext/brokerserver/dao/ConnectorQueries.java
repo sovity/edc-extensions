@@ -24,6 +24,7 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ConnectorQueries {
@@ -50,5 +51,11 @@ public class ConnectorQueries {
         return dsl.select(c.ENDPOINT).from(c)
                 .where(c.LAST_SUCCESSFUL_REFRESH_AT.lt(OffsetDateTime.now().minus(deleteOfflineConnectorsAfter)))
                 .fetch(c.ENDPOINT);
+    }
+
+    public Map<String, String> getConnectorIdsByEndpointUrl(DSLContext dsl, Collection<String> endpoints) {
+        return dsl.selectFrom(Tables.CONNECTOR)
+            .where(PostgresqlUtils.in(Tables.CONNECTOR.ENDPOINT_URL, endpoints))
+            .fetchMap(Tables.CONNECTOR.ENDPOINT_URL, Tables.CONNECTOR.CONNECTOR_ID);
     }
 }

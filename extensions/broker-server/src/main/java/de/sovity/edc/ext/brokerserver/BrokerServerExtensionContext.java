@@ -32,7 +32,6 @@ public record BrokerServerExtensionContext(
 
         // Required for Integration Tests
         ConnectorUpdater connectorUpdater,
-        ConnectorCreator connectorCreator,
         PolicyMapper policyMapper,
         FetchedCatalogBuilder fetchedCatalogBuilder,
         DataOfferRecordUpdater dataOfferRecordUpdater

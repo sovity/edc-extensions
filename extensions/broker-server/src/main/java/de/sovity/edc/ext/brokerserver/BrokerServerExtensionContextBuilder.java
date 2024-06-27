@@ -316,7 +316,6 @@ public class BrokerServerExtensionContextBuilder {
         );
 
         return new BrokerServerExtensionContext(
-                brokerServerResource,
                 brokerServerInitializer,
                 connectorUpdater,
                 connectorCreator,

@@ -38,17 +38,8 @@ import de.sovity.edc.ext.brokerserver.services.ConnectorCreator;
 import de.sovity.edc.ext.brokerserver.services.ConnectorKiller;
 import de.sovity.edc.ext.brokerserver.services.KnownConnectorsInitializer;
 import de.sovity.edc.ext.brokerserver.services.OfflineConnectorKiller;
-import de.sovity.edc.ext.brokerserver.services.api.AuthorityPortalConnectorDataOfferApiService;
-import de.sovity.edc.ext.brokerserver.services.api.AuthorityPortalConnectorMetadataApiService;
-import de.sovity.edc.ext.brokerserver.services.api.AuthorityPortalConnectorQueryService;
-import de.sovity.edc.ext.brokerserver.services.api.AuthorityPortalOrganizationMetadataApiService;
-import de.sovity.edc.ext.brokerserver.services.api.CatalogApiService;
-import de.sovity.edc.ext.brokerserver.services.api.ConnectorApiService;
-import de.sovity.edc.ext.brokerserver.services.api.ConnectorDetailApiService;
-import de.sovity.edc.ext.brokerserver.services.api.ConnectorListApiService;
 import de.sovity.edc.ext.brokerserver.services.api.ConnectorOnlineStatusMapper;
 import de.sovity.edc.ext.brokerserver.services.api.ConnectorService;
-import de.sovity.edc.ext.brokerserver.services.api.DataOfferDetailApiService;
 import de.sovity.edc.ext.brokerserver.services.api.DataOfferMappingUtils;
 import de.sovity.edc.ext.brokerserver.services.api.PaginationMetadataUtils;
 import de.sovity.edc.ext.brokerserver.services.api.filtering.CatalogFilterAttributeDefinitionService;
@@ -273,46 +264,6 @@ public class BrokerServerExtensionContextBuilder {
                 dslContextFactory,
                 knownConnectorsInitializer,
                 quartzScheduleInitializer
-        );
-
-        // UI Capabilities
-        var catalogApiService = new CatalogApiService(
-                paginationMetadataUtils,
-                catalogQueryService,
-                dataOfferMappingUtils,
-                catalogFilterService,
-                brokerServerSettings
-        );
-        var connectorApiService = new ConnectorApiService(
-                connectorService,
-                brokerEventLogger,
-                connectorQueries
-        );
-        var dataOfferDetailApiService = new DataOfferDetailApiService(
-                dataOfferDetailPageQueryService,
-                viewCountLogger,
-                dataOfferMappingUtils
-        );
-        var connectorQueryService = new AuthorityPortalConnectorQueryService();
-        var dataOfferCountApiService = new AuthorityPortalConnectorMetadataApiService(
-                connectorQueryService,
-                connectorOnlineStatusMapper
-        );
-        var connectorDetailApiService = new ConnectorDetailApiService(connectorDetailQueryService, connectorOnlineStatusMapper);
-        var connectorListApiService = new ConnectorListApiService(connectorListQueryService, connectorOnlineStatusMapper, paginationMetadataUtils);
-        var authorityPortalOrganizationMetadataApiService = new AuthorityPortalOrganizationMetadataApiService();
-        var authorityPortalDataOfferApiService = new AuthorityPortalConnectorDataOfferApiService(connectorQueryService, connectorOnlineStatusMapper);
-        var brokerServerResource = new BrokerServerResourceImpl(
-                dslContextFactory,
-                connectorApiService,
-                connectorListApiService,
-                connectorDetailApiService,
-                catalogApiService,
-                dataOfferDetailApiService,
-                adminApiKeyValidator,
-                dataOfferCountApiService,
-                authorityPortalDataOfferApiService,
-                authorityPortalOrganizationMetadataApiService
         );
 
         return new BrokerServerExtensionContext(
